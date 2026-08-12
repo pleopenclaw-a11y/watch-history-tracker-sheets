@@ -1,16 +1,12 @@
 # ดูแล้ว ดูอยู่ ดูต่อ — Watch History Tracker Sheets
 
-A polished frontend MVP for tracking movies, series, and anime in a streaming-inspired dark UI. It includes local demo persistence, CRUD-like add/edit/delete interactions, search, status filters, ratings, responsive grid/list/columns views, and poster URLs.
+A production-capable Vercel Functions backend is included. With no environment variables, the UI remains a localStorage demo; when configured it loads and mutates the user's Google Sheet.
 
-## Run
+## Google Sheets setup
+1. Create a Google Cloud OAuth web client, enable Sheets and Drive APIs, and add `/api/auth/callback` to its redirect URIs.
+2. Copy `.env.example` to `.env.local`, set credentials and a long random `SESSION_SECRET`.
+3. Visit `/api/auth/login` to authenticate. The backend requests `drive.file`, creates `watchlog library` when `GOOGLE_SHEET_ID` is absent, and stores an encrypted httpOnly session cookie.
 
-```bash
-npm install
-npm run dev
-```
+Routes: `GET /api/auth/login`, `GET /api/auth/callback`, `GET /api/auth/me`, `POST /api/auth/logout`, `GET/POST/DELETE /api/entries`.
 
 Quality checks: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
-
-## Google Sheets roadmap
-
-The UI currently uses localStorage so it is immediately deployable as a frontend demo. Google OAuth and per-user Google Sheets synchronization should be added behind server-side Vercel Functions next. Keep OAuth secrets/tokens server-side, use `drive.file`, validate the immutable A:K sheet schema, and never treat localStorage as the source of truth. See `PLAN.md` for the full security and API design.
