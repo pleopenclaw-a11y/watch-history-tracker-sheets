@@ -1,6 +1,6 @@
 import type {VercelRequest,VercelResponse} from '@vercel/node';
 import {google} from 'googleapis';
-import {oauth,json,method,session} from '../_lib/auth.js';
+import {oauth,json,method,session} from './_lib/auth';
 const headers=['id','title','kind','status','rating','year','platform','poster','progress','description','updatedAt'];
 async function api(req:VercelRequest){const s=session(req);if(!s)throw Object.assign(new Error('unauthorized'),{status:401});const a=oauth();a.setCredentials({refresh_token:s.refreshToken});return {sheets:google.sheets({version:'v4',auth:a}),drive:google.drive({version:'v3',auth:a})}}
 export default async function handler(req:VercelRequest,res:VercelResponse){try{const {sheets,drive}=await api(req);let id=process.env.GOOGLE_SHEET_ID; if(!id){const f=await drive.files.create({requestBody:{name:'watchlog library',mimeType:'application/vnd.google-apps.spreadsheet'},fields:'id'});id=f.data.id!;await sheets.spreadsheets.values.update({spreadsheetId:id,range:'Sheet1!A1:K1',valueInputOption:'RAW',requestBody:{values:[headers]}})}
